@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <title>Mảnh Ghép Tình Yêu</title>
+  <link rel="stylesheet" href="./style/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Mảnh Ghép Ký Ức</h1>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number" id="progress-text">0%</div>
+        <div class="stat-label">Tiến độ</div>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="game-area">
+      <div class="board-container">
+        <div id="puzzle-board" class="board"></div>
+      </div>
+      <div class="pieces-container">
+        <div id="pieces-container" class="pieces"></div>
+      </div>
+    </div>
+    <div class="buttons">
+      <button id="reset">Xếp Lại</button>
+    </div>
+  </div>
+  <div class="success-animation" id="success-animation">
+    <div class="success-content">
+      <h2>Chúc mừng!</h2>
+      <img src="./style/AnhGhep.jpg" alt="">
+      <p>Bạn đã hoàn thành bức ảnh ❤️</p>
+      <button class="continue-button" onclick="closeSuccessModal()">Tiếp tục</button>
+    </div>
+  </div>
+  <script src="./style/script.js"></script>
+</body>
+</html>
