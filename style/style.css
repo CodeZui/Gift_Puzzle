@@ -35,6 +35,35 @@ body::before {
   50% { transform: translateY(-20px); }
 }
 
+.portrait-warning {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  background: white;
+  color: black;
+  font-family: 'Poppins', sans-serif;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  padding: 2rem;
+}
+
+@media screen and (orientation: portrait) {
+  .container, .game-area, .success-animation {
+    display: none !important;
+  }
+
+  .portrait-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+}
+
+
 .container {
   max-width: 100%;
   text-align: center;
