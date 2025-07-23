@@ -1,3 +1,20 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const audio = document.getElementById("sound");
+  let isPlayed = false;
+
+  function playAudioOnce() {
+    if (!isPlayed) {
+      audio.play().catch((e) => {
+        console.warn("Không thể phát nhạc tự động:", e);
+      });
+      isPlayed = true;
+    }
+  }
+
+  document.addEventListener("click", playAudioOnce, { once: true });
+  document.addEventListener("touchstart", playAudioOnce, { once: true });
+});
+
 const board = document.getElementById("puzzle-board");
 const piecesContainer = document.getElementById("pieces-container");
 const resetBtn = document.getElementById("reset");
@@ -7,7 +24,7 @@ const successAnimation = document.getElementById("success-animation");
 
 const imageSrc = "./style/AnhGhep.jpg"; 
 const pieceCount = 4;
-let draggedPiece = null;
+let selectedPiece = null;
 
 function startGame() {
   updateProgress();
@@ -19,10 +36,20 @@ function createBoard() {
     const slot = document.createElement("div");
     slot.classList.add("slot");
     slot.dataset.index = i;
-    slot.addEventListener("dragover", dragOver);
-    slot.addEventListener("drop", drop);
-    slot.addEventListener("dragenter", dragEnter);
-    slot.addEventListener("dragleave", dragLeave);
+
+    slot.addEventListener("click", () => {
+      if (selectedPiece) {
+        if (slot.firstChild) {
+          piecesContainer.appendChild(slot.firstChild);
+        }
+        slot.appendChild(selectedPiece);
+        selectedPiece.classList.remove("selected");
+        selectedPiece = null;
+        updateProgress();
+        checkWin();
+      }
+    });
+
     board.appendChild(slot);
   }
 }
@@ -41,8 +68,8 @@ function createPieces() {
   indices.forEach((i) => {
     const piece = document.createElement("div");
     piece.classList.add("piece");
-    piece.setAttribute("draggable", true);
     piece.dataset.index = i;
+
     const x = i % pieceCount;
     const y = Math.floor(i / pieceCount);
     piece.style.backgroundImage = `url(${imageSrc})`;
@@ -51,9 +78,15 @@ function createPieces() {
     const boardSize = getBoardSize();
     piece.style.backgroundPosition = `-${x * pieceSize}px -${y * pieceSize}px`;
     piece.style.backgroundSize = `${boardSize}px ${boardSize}px`;
-    
-    piece.addEventListener("dragstart", dragStart);
-    piece.addEventListener("dragend", dragEnd);
+
+    piece.addEventListener("click", () => {
+      if (selectedPiece) {
+        selectedPiece.classList.remove("selected");
+      }
+      selectedPiece = piece;
+      piece.classList.add("selected");
+    });
+
     piecesContainer.appendChild(piece);
   });
 }
@@ -68,47 +101,6 @@ function getBoardSize() {
   return window.innerWidth <= 360 ? 180 : 
           window.innerWidth <= 480 ? 200 : 
           window.innerWidth <= 768 ? 240 : 280;
-}
-
-function dragStart(e) {
-  draggedPiece = e.target;
-  e.target.classList.add("dragging");
-}
-
-function dragEnd(e) {
-  e.target.classList.remove("dragging");
-}
-
-function dragOver(e) {
-  e.preventDefault();
-}
-
-function dragEnter(e) {
-  e.preventDefault();
-  if (e.target.classList.contains("slot")) {
-    e.target.classList.add("drag-over");
-  }
-}
-
-function dragLeave(e) {
-  if (e.target.classList.contains("slot")) {
-    e.target.classList.remove("drag-over");
-  }
-}
-
-function drop(e) {
-  e.preventDefault();
-  const dropZone = e.target;
-  dropZone.classList.remove("drag-over");
-  
-  if (dropZone.classList.contains("slot")) {
-    if (dropZone.firstChild) {
-      piecesContainer.appendChild(dropZone.firstChild);
-    }
-    dropZone.appendChild(draggedPiece);
-    updateProgress();
-    checkWin();
-  }
 }
 
 function updateProgress() {
@@ -150,16 +142,6 @@ function showSuccessModal() {
 function closeSuccessModal() {
   successAnimation.classList.remove("show");
 }
-
-piecesContainer.addEventListener("dragover", dragOver);
-piecesContainer.addEventListener("drop", (e) => {
-  e.preventDefault();
-  if (draggedPiece) {
-    piecesContainer.appendChild(draggedPiece);
-    updateProgress();
-    checkWin();
-  }
-});
 
 resetBtn.addEventListener("click", () => {
   createBoard();
